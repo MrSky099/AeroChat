@@ -90,5 +90,8 @@ def UserOTPVerify(request):
 
 def Home(request):
     return render(request, 'home.html')
+
+def RightSideMenu(request):
+    return render(request,'rightsidemenu.html')
         
         
