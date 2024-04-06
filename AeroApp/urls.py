@@ -8,5 +8,5 @@ urlpatterns = [
     path('verify-otp/', views.UserOTPVerify, name ='verify-otp'),
     path('home/', views.Home , name ='home'),
     path('profile/', views.UserProfile, name='profile'),
-    path('logout/', views.UserLogout, name='logout')
+    path('logout/', views.UserLogout, name='logout'),
 ]

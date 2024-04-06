@@ -4,3 +4,4 @@ from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
     full_name = models.CharField(max_length=50)
     otp = models.CharField(max_length=10, blank=True, null=True)
+    Bio = models.CharField(max_length=300, null=True)

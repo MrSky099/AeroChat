@@ -40,15 +40,17 @@ def UserLogin(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-        if not User.objects.filter(username=username).exists():
-            messages.error(request,'Invalid Username')
-            return redirect('login')
-        
-        user = authenticate(username=username, password=password)
+        user = User.objects.filter(username=username).first()
 
-        if user is not None:
+        if not user:
+            messages.error(request, 'Invalid Username')
+            return redirect('login')     
+           
+        authenticated_user = authenticate(username=username, password=password)
+
+        if authenticated_user is not None:
             otp = generate_otp()
-            send_otp_email(user.email,otp)
+            send_otp_email(user.email, otp)
             request.session['otp'] = otp
             request.session['username'] = username
             request.session['otp_time'] = timezone.now().isoformat()
@@ -96,8 +98,7 @@ def Home(request):
     return render(request, 'home.html')
 
 def UserProfile(request):
+    if request.method == 'POST':
+        bio = request.POST.get('bio')
+        bio.save()
     return render(request,'userprofile.html')
-
-
-        
-        
