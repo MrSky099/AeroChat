@@ -8,6 +8,7 @@ from django.utils import timezone
 User = get_user_model()
 
 def UserRegistration(request):
+
     if request.method == 'POST':
         email = request.POST.get('email')
         full_name = request.POST.get('full_name')
