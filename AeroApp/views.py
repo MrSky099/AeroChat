@@ -79,8 +79,8 @@ def UserOTPVerify(request):
         if otp_entered == otp_send:
             user = User.objects.get(username=username)
             login(request,user)
-            del request.session['otp']
             del request.session['username']
+            del request.session['otp']
             return redirect('home')
         else:
             messages.error(request, 'Invalid OTP')
@@ -88,10 +88,16 @@ def UserOTPVerify(request):
         
     return render(request, 'verify-otp.html')
 
+def UserLogout(request):
+    logout(request)
+    return redirect('register')
+
 def Home(request):
     return render(request, 'home.html')
 
 def UserProfile(request):
     return render(request,'userprofile.html')
+
+
         
         
