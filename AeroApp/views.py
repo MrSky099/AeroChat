@@ -91,7 +91,7 @@ def UserOTPVerify(request):
 def Home(request):
     return render(request, 'home.html')
 
-def RightSideMenu(request):
-    return render(request,'rightsidemenu.html')
+def UserProfile(request):
+    return render(request,'userprofile.html')
         
         

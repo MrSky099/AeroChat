@@ -7,5 +7,5 @@ urlpatterns = [
     path('login/', views.UserLogin , name = 'login'),
     path('verify-otp/', views.UserOTPVerify, name ='verify-otp'),
     path('home/', views.Home , name ='home'),
-    path('rightmenubar/', views.RightSideMenu, name ='rightmenubar')
+    path('profile/', views.UserProfile, name="profile")
 ]
