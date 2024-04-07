@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .utils import generate_otp, send_otp_email
 from django.utils import timezone
+from .models import User
 
 User = get_user_model()
 
@@ -99,7 +100,20 @@ def Home(request):
     return render(request, 'home.html')
 
 def UserProfile(request):
+    user = request.user
+    try:
+        profile = User.objects.get(username=user.username)
+        bio = profile.Bio
+    except User.DoesNotExist:
+        bio = None
+
     if request.method == 'POST':
-        bio = request.POST.get('bio')
-        bio.save()
-    return render(request,'userprofile.html')
+        bio_text = request.POST.get('bio')
+        if bio_text:
+            if bio:
+                profile.bio = bio_text
+                profile.save()
+            else:
+                User.objects.create(user=user, bio=bio_text)
+            return redirect('profile')
+    return render(request,'userprofile.html',{'bio':bio})

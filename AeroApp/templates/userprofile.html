@@ -46,14 +46,16 @@
             <div class="col-md-12">
               <div class="d-flex justify-content-between align-items-center">
                 <h4>Bio</h4>
-                <button class="btn btn-dark" onclick="showEditBioForm()">Edit Bio</button>
+                {% if bio %}
+                  <button class="btn btn-dark" onclick="showEditBioForm()">Update Bio</button>
+                {% endif %}
               </div>
               <div class="d-flex justify-content-between align-items-center">
                 <p id="bio" class="flex-grow-1">{{ user.bio }}</p>
               </div>
             </div>
           </div>
-          <div class="row" id="editBioForm" style="display: none;">
+          <div class="row" id="editBioForm" {% if not bio %} style="display: none;" {% endif %}>
             <div class="col-md-12">
               <form action="" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
