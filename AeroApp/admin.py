@@ -4,6 +4,6 @@ from .models import User
 
 class Useradmin(UserAdmin):
     model = User
-    list_display = ['email','full_name','username', 'is_staff', 'date_joined']
+    list_display = ['email','full_name','username','Bio', 'is_staff', 'date_joined']
 
 admin.site.register(User,Useradmin)

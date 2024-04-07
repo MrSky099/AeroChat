@@ -100,20 +100,13 @@ def Home(request):
     return render(request, 'home.html')
 
 def UserProfile(request):
-    user = request.user
-    try:
-        profile = User.objects.get(username=user.username)
-        bio = profile.Bio
-    except User.DoesNotExist:
-        bio = None
+    return render(request, 'userprofile.html')
 
+def UserBio(request):
     if request.method == 'POST':
-        bio_text = request.POST.get('bio')
-        if bio_text:
-            if bio:
-                profile.bio = bio_text
-                profile.save()
-            else:
-                User.objects.create(user=user, bio=bio_text)
-            return redirect('profile')
-    return render(request,'userprofile.html',{'bio':bio})
+        Bio = request.POST.get('Bio')
+        user = request.user
+        user.Bio = Bio
+        user.save()
+        return redirect('profile')
+    return render(request, 'bio.html')
