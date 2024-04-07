@@ -110,3 +110,25 @@ def UserBio(request):
         user.save()
         return redirect('profile')
     return render(request, 'bio.html')
+
+def edit_bio(request):
+    user = request.user
+    if request.method == 'POST':
+        bio = request.POST.get('Bio')
+        user.Bio = bio
+        user.save()
+        return redirect('profile')
+    return render(request, 'edit_bio.html', {'bio': user.Bio})
+
+def update_bio(request):
+    user = request.user
+    if request.method == 'POST':
+        bio = request.POST.get('Bio')
+        user.Bio = bio
+        user.save()
+        return redirect('profile')
+    return render(request, 'update_bio.html', {'bio': user.Bio})
+
+
+
+    
