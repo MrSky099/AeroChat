@@ -23,14 +23,6 @@
         font-size: 25px;
         text-align: left;
     }
-    /* Style the textarea */
-    textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      resize: vertical; /* Allow vertical resizing */
-    }
   </style>
 </head>
 <body>
@@ -39,22 +31,15 @@
   <div class="row justify-content-center">
     <div class="col-md-4">
       <div class="logo-container">
-        <img src="{% static 'logo.png' %}" alt="logo of AeroChat" class="logo-img">
+        <h2>Search Friends</h2>
       </div>
       <form method="post" action="" enctype="multipart/form-data" class="border p-3">
         {% csrf_token %}
-          {% if messages %}
-            <div class="alert alert-primary" role="alert">
-              {% for message in messages %}
-                {{ message }}
-              {% endfor %}
-            </div>
-          {% endif %} 
-            <div class="mb-3">
-                <label for="bio" class="form-label">{{ user.username }} Bio</label>
-                <textarea id="bio" name="Bio" rows="5">{{ user.Bio }}</textarea>
-            </div>
-        <button type="submit" class="btn btn-dark">Submit</button>
+        <div class="mb-3">
+          <label for="otp" class="form-label">Enter Username</label>
+          <input type="text" class="form-control" id="otp"  name="" required>
+        </div>
+        <button type="submit" class="btn btn-dark">Search</button>
       </form>
     </div>
   </div>

@@ -74,17 +74,17 @@ def UserOTPVerify(request):
         if otp_time:
             time_difference = timezone.now() - otp_time
             if time_difference.total_seconds() > 300:
-                del request.session['username']
-                del request.session['otp_time']
-                del request.session['otp']
+                request.session.pop('username', None)
+                request.session.pop('otp_time', None)
+                request.session.pop('otp', None)
                 messages.error(request,'OTP Expired. Please request a new one.')
                 return redirect('verify-otp')
         
         if otp_entered == otp_send:
             user = User.objects.get(username=username)
             login(request,user)
-            del request.session['username']
-            del request.session['otp']
+            request.session.pop('username', None)
+            request.session.pop('otp', None)
             return redirect('home')
         else:
             messages.error(request, 'Invalid OTP')
@@ -104,31 +104,18 @@ def UserProfile(request):
 
 def UserBio(request):
     if request.method == 'POST':
-        Bio = request.POST.get('Bio')
         user = request.user
+        Bio = request.POST.get('Bio')
+        print(Bio)
         user.Bio = Bio
         user.save()
+        bio = user.Bio
         return redirect('profile')
-    return render(request, 'bio.html')
+    bio = request.user.Bio if request.user.Bio else None
+    return render(request, 'bio.html', {'bio': bio})
 
-def edit_bio(request):
-    user = request.user
-    if request.method == 'POST':
-        bio = request.POST.get('Bio')
-        user.Bio = bio
-        user.save()
-        return redirect('profile')
-    return render(request, 'edit_bio.html', {'bio': user.Bio})
-
-def update_bio(request):
-    user = request.user
-    if request.method == 'POST':
-        bio = request.POST.get('Bio')
-        user.Bio = bio
-        user.save()
-        return redirect('profile')
-    return render(request, 'update_bio.html', {'bio': user.Bio})
-
+def SearchOtherUsers(request):
+    return render(request, 'searchpeople.html')
 
 
     

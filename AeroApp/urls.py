@@ -12,6 +12,6 @@ urlpatterns = [
     path('profile/', views.UserProfile, name='profile'),
 
     path('bio/', views.UserBio, name='bio'),
-    path('edit_bio/', views.edit_bio, name='edit_bio'),
-    path('update_bio/', views.update_bio, name='update_bio'),
+
+    path('search/', views.SearchOtherUsers, name = 'search')
 ]
