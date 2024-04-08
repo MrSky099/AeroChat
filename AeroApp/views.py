@@ -115,7 +115,18 @@ def UserBio(request):
     return render(request, 'bio.html', {'bio': bio})
 
 def SearchOtherUsers(request):
-    return render(request, 'searchpeople.html')
-
-
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        if username:
+            try:
+                user = User.objects.get(username=username)
+                return render(request, 'searchpeople.html', {'searched_user':username})
+            except User.DoesNotExist:
+                error_messege = "User Does not Exist."
+                return render(request, 'searchpeople.html', {'error_messege':error_messege})
+        else:
+            error_messege = "Please enter a valid Username"
+            return render(request, 'searchpeople.html', {'error_messege':error_messege})
+    else:
+        return render(request, 'searchpeople.html')
     

@@ -33,14 +33,19 @@
       <div class="logo-container">
         <h2>Search Friends</h2>
       </div>
-      <form method="post" action="" enctype="multipart/form-data" class="border p-3">
+      {% if error_messege %}
+        <p>{{ error_messege }}</p>
+      {% endif %}
+      <form method="post" action="{% url 'search' %}" class="border p-3">
         {% csrf_token %}
         <div class="mb-3">
-          <label for="otp" class="form-label">Enter Username</label>
-          <input type="text" class="form-control" id="otp"  name="" required>
+          <label for="username" class="form-label">Enter Username</label>
+          <input type="text" name="username" class="form-control" required>
         </div>
         <button type="submit" class="btn btn-dark">Search</button>
       </form>
+      <h1>User Search Results</h1>
+      <p>Username: {{ searched_user }}</p>
     </div>
   </div>
 </div>
