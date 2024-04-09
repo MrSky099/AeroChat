@@ -14,11 +14,12 @@ urlpatterns = [
 
     path('profile/<str:username>/', views.UserProfile, name='profile'),
     path('home/', views.Home , name ='home'),
-    path('<str:username>/', views.OtherUserProfile, name='other-profile'),
     path('send-friend-request/<str:username>/', views.send_friend_request, name='send_friend_request'),
     path('accept-friend-request/<str:username>/', views.accept_friend_request, name='accept_friend_request'),
     path('reject-friend-request/<str:username>/', views.reject_friend_request, name='reject_friend_request'),
     path('friends/', views.friendsList, name='friendsList'),
+    path('requests/', views.PandingRequest , name='requests'),
+    path('<str:username>/', views.OtherUserProfile, name='other-profile'),
 
 ]
 

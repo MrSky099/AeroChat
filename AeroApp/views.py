@@ -166,3 +166,8 @@ def reject_friend_request(request, username):
 def friendsList(request):
     friends = Friendship.objects.filter(user1=request.user) | Friendship.objects.filter(user2=request.user)
     return render(request, 'friendslist.html', {'friends':friends})
+
+def PandingRequest(request):
+    friend_requests = FriendRequest.objects.filter(to_user=request.user)
+    friend_requests_dict = {'friend_requests': list(friend_requests)}
+    return render(request, 'pending_request.html', friend_requests_dict)

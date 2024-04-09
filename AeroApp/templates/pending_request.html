@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AeroChat</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: "Ubuntu";
+    }
+    .logo-container {
+      text-align: center;
+    }
+    .logo-img {
+      max-width: 300px; /* Adjust the size as needed */
+    }
+    .navbar {
+      background-color: #f8f9fa; /* Light background color */
+      padding: 5px 15px; /* Adjusted padding */
+      margin: 0px;
+    }
+    .navbar-brand {
+      font-size: 20px; /* Adjusted font size */
+      color: #212529; /* Text color */
+    }
+    .navbar-nav .nav-link {
+      font-size: 16px; /* Adjusted font size */
+      color: #212529; /* Text color */
+    }
+    .logo-img {
+      width: 100%; /* Ensure logo width fills the container */
+      max-width: 200px; /* Set max width for the logo */
+    } 
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <img src="{% static 'logo.png' %}" alt="logo of AeroChat" class="logo-img">
+        </a>
+    </div>
+</nav>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-4">
+      <div class="logo-container">
+        <h2>Friends Requests</h2>
+      </div>
+            {% if friend_requests %}
+                <ul>
+                    {% for request in friend_requests %}
+                        <li>{{ request.from_user.username }} sent you a friend request.</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No friend requests at the moment.</p>
+            {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS (optional, for Bootstrap features) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
