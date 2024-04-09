@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .utils import generate_otp, send_otp_email
 from django.utils import timezone
-from .models import User
+from .models import User, FriendRequest, Friendship
 from django.shortcuts import render, get_object_or_404
 
 User = get_user_model()
@@ -137,6 +137,32 @@ def OtherUserProfile(request, username):
     bio = searched_user.Bio if searched_user.Bio else ''
     followers_count = 500  # Replace with actual follower count
     following_count = 200  # Replace with actual following count
-    return render(request, 'otheruserprofile.html', {'searched_user': searched_user, 'bio': bio, 'followers_count': followers_count, 'following_count': following_count})
+    friend_request_sent = FriendRequest.objects.filter(from_user=request.user, to_user=searched_user).exists()
+    return render(request, 'otheruserprofile.html', {'searched_user': searched_user, 'bio': bio, 'followers_count': followers_count, 'following_count': following_count, 'friend_request_sent': friend_request_sent})
 
-    
+def send_friend_request(request,username):
+    if request.method == 'POST':
+        from_user = request.user
+        print(from_user)
+        to_user = get_object_or_404(User, username=username)
+        friend_request = FriendRequest(from_user=from_user, to_user=to_user)
+        friend_request.save()
+        messages.info(request, "Send Friend Request")
+        return redirect('other-profile', username=username)
+    return redirect('home')
+
+def accept_friend_request(request, username):
+    friend_request = get_object_or_404(FriendRequest, to_user = request.user , from_user_username = username)
+    Friendship.objects.create(user1 =  friend_request.from_user , user2 = friend_request.to_user)
+    friend_request.delete()
+    messages.add_message('Accept request successfully')
+    # return redirect('friendsList')
+
+def reject_friend_request(request, username):
+    friend_request = get_object_or_404(FriendRequest, to_user = request.user , from_user_username = username)
+    friend_request.delete()
+    return redirect('friendsList')
+
+def friendsList(request):
+    friends = Friendship.objects.filter(user1=request.user) | Friendship.objects.filter(user2=request.user)
+    return render(request, 'friendslist.html', {'friends':friends})

@@ -45,13 +45,17 @@
         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
           <ul class="navbar-nav ml-auto"> <!-- Align to the right -->
             <li class="nav-item">
+              <a class="nav-link" href="#"><i class="fas fa-user-friends"></i> Pending Requests</a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" href="{% url 'search' %}"><i class="fas fa-search"></i> Search People</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'profile' username=user.username %}"><i class="fas fa-user"></i> Profile</a>
             </li>
+            
           </ul>
-        </div>
+        </div>        
     </div>
     <!-- Side Menu for User Details -->
   </nav>

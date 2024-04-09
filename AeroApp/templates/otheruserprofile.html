@@ -60,6 +60,11 @@
       width: 100%; /* Ensure logo width fills the container */
       max-width: 200px; /* Set max width for the logo */
     } 
+    .custom-alert {
+      padding: 0px; /* Adjust padding as needed */
+      margin-bottom: 0; /* Remove any extra margin */
+      border-radius: 0px;
+    }
   </style>
 </head>
 <body>
@@ -69,7 +74,14 @@
             <img src="{% static 'logo.png' %}" alt="logo of AeroChat" class="logo-img">
         </a>      
     </div>
-</nav> 
+</nav>
+{% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-primary custom-alert d-flex justify-content-center align-items-center" role="alert">
+        <p>{{ message }}</p>
+      </div>  
+    {% endfor %}
+{% endif %}
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-md-8">
@@ -110,9 +122,21 @@
 <div class="row justify-content-center mt-4">
     <div class="col-md-8">
       <div class="text-center">
-        <a class="btn btn-dark mx-2" href="#">Add Friend</a>
-        <a class="btn btn-dark mx-2" href="#">Block</a>
+        {% if friend_request_sent %}
+            <form method="post" action="{% url 'send_friend_request' searched_user.username %}" >
+              {% csrf_token %}
+              <input type="hidden" name="username" value="{{ searched_user.username }}">
+              <button type="submit" class="btn btn-dark mx-2">Cancel Request</button>
+            </form>
+        {% else %}
+            <form method="post" action="{% url 'send_friend_request' searched_user.username %}" >
+              {% csrf_token %}
+              <input type="hidden" name="username" value="{{ searched_user.username }}">
+              <button type="submit" class="btn btn-dark mx-2">Add Friend</button>
+            </form>
+        {% endif %}
       </div>
+      <a class="btn btn-dark mx-2" href="#">Block</a>
     </div>
   </div>
 </html>
