@@ -5,6 +5,7 @@ from django.contrib import messages
 from .utils import generate_otp, send_otp_email
 from django.utils import timezone
 from .models import User
+from django.shortcuts import render, get_object_or_404
 
 User = get_user_model()
 
@@ -99,19 +100,20 @@ def UserLogout(request):
 def Home(request):
     return render(request, 'home.html')
 
-def UserProfile(request):
-    return render(request, 'userprofile.html')
+def UserProfile(request, username):
+    user = get_object_or_404(User, username=username)
+    bio = request.user.Bio if request.user.Bio else ''
+    return render(request, 'userprofile.html', {'user':user,'bio': bio})
 
 def UserBio(request):
     if request.method == 'POST':
         user = request.user
         Bio = request.POST.get('Bio')
-        print(Bio)
         user.Bio = Bio
         user.save()
         bio = user.Bio
-        return redirect('profile')
-    bio = request.user.Bio if request.user.Bio else None
+        return redirect('profile', username=user.username)
+    bio = request.user.Bio if request.user.Bio else ''
     return render(request, 'bio.html', {'bio': bio})
 
 def SearchOtherUsers(request):
@@ -119,8 +121,8 @@ def SearchOtherUsers(request):
         username = request.POST.get('username')
         if username:
             try:
-                user = User.objects.get(username=username)
-                return render(request, 'searchpeople.html', {'searched_user':username})
+                searched_user = User.objects.get(username=username)
+                return render(request, 'searchpeople.html', {'searched_user':searched_user})
             except User.DoesNotExist:
                 error_messege = "User Does not Exist."
                 return render(request, 'searchpeople.html', {'error_messege':error_messege})
@@ -129,4 +131,12 @@ def SearchOtherUsers(request):
             return render(request, 'searchpeople.html', {'error_messege':error_messege})
     else:
         return render(request, 'searchpeople.html')
+    
+def OtherUserProfile(request, username):
+    searched_user = get_object_or_404(User, username=username)
+    bio = searched_user.Bio if searched_user.Bio else ''
+    followers_count = 500  # Replace with actual follower count
+    following_count = 200  # Replace with actual following count
+    return render(request, 'otheruserprofile.html', {'searched_user': searched_user, 'bio': bio, 'followers_count': followers_count, 'following_count': following_count})
+
     

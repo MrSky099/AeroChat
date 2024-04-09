@@ -12,20 +12,75 @@
       font-family: "Ubuntu";
     }
     .logo-container {
-        text-align: center;
+      text-align: center;
     }
     .logo-img {
-        max-width: 300px; /* Adjust the size as needed */
+      max-width: 300px; /* Adjust the size as needed */
     }
     .form-title {
-        font-family: 'Ubuntu';
-        /* font-weight: bold; */
-        font-size: 25px;
-        text-align: left;
+      font-family: 'Ubuntu';
+      /* font-weight: bold; */
+      font-size: 25px;
+      text-align: left;
     }
+
+    .search-results-box {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 3px; /* Reduced padding to make the box smaller */
+      margin-top: 20px;
+      display: flex; /* Use flexbox for vertical centering */
+      justify-content: center; /* Center content horizontally */
+      align-items: center;
+      text-decoration: none;
+      color: #333;
+      transition: color 0.3s;
+    }
+    .search-results-box:hover {
+      color: #666; /* Change text color on hover */
+    }
+
+    .search-results-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .searched-username {
+      text-align: center;
+      margin: 0;
+      font-size: 20px; /* Center-align the text */
+    }
+    .navbar {
+      background-color: #f8f9fa; /* Light background color */
+      padding: 5px 15px; /* Adjusted padding */
+      margin: 0px;
+    }
+    .navbar-brand {
+      font-size: 20px; /* Adjusted font size */
+      color: #212529; /* Text color */
+    }
+    .navbar-nav .nav-link {
+      font-size: 16px; /* Adjusted font size */
+      color: #212529; /* Text color */
+    }
+    .logo-img {
+      width: 100%; /* Ensure logo width fills the container */
+      max-width: 200px; /* Set max width for the logo */
+    } 
   </style>
 </head>
 <body>
+
+<nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <img src="{% static 'logo.png' %}" alt="logo of AeroChat" class="logo-img">
+        </a>
+    </div>
+</nav>
 
 <div class="container mt-5">
   <div class="row justify-content-center">
@@ -33,9 +88,11 @@
       <div class="logo-container">
         <h2>Search Friends</h2>
       </div>
-      {% if error_messege %}
-        <p>{{ error_messege }}</p>
-      {% endif %}
+        {% if error_messege %}
+          <div class="alert alert-primary" role="alert">
+            <p>{{ error_messege }}</p>
+          </div>
+        {% endif %}
       <form method="post" action="{% url 'search' %}" class="border p-3">
         {% csrf_token %}
         <div class="mb-3">
@@ -44,8 +101,15 @@
         </div>
         <button type="submit" class="btn btn-dark">Search</button>
       </form>
-      <h1>User Search Results</h1>
-      <p>Username: {{ searched_user }}</p>
+      <h2 class="search-results-title">User Search Results</h2>
+      {% if searched_user %}
+          <a class="search-results-box" href="{% url 'other-profile' username=searched_user.username %}">
+            <div class="user-info">
+              <p class="searched-username">{{ searched_user }}</p>
+            </div>
+          </a>
+      {% endif %}
+      </div>
     </div>
   </div>
 </div>
