@@ -33,7 +33,28 @@
     .logo-img {
       width: 100%; /* Ensure logo width fills the container */
       max-width: 200px; /* Set max width for the logo */
-    } 
+    }
+    .user-box {
+        background-color: #f8f9fa;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between; /* Adds space between buttons */
+    }
+
+    .user-box span {
+        font-weight: bold 10px; /* Makes username bold */
+        text-align: center; /* Centers the username */
+        flex-grow: 10;
+        font-size: 20px;
+    }
+
+    .user-box form {
+        margin-left: 10px; /* Adds space between buttons and username */
+    }
+
   </style>
 </head>
 <body>
@@ -48,21 +69,28 @@
 
 <div class="container mt-5">
   <div class="row justify-content-center">
-    <div class="col-md-4">
-      <div class="logo-container">
-        <h2>Friends Requests</h2>
+      <div class="col-md-4">
+          <div class="logo-container">
+              <h2>Friends Requests</h2>
+          </div>
+          {% if friend_requests %}
+              {% for request in friend_requests %}
+                  <div class="user-box">
+                      <span>{{ request.from_user.username }}</span>
+                      <form method="post" action="">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-dark">Accept</button>
+                      </form>
+                      <form method="post" action="">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-dark">Cancel</button>
+                      </form>
+                  </div>
+              {% endfor %}
+          {% else %}
+          <p>No friend requests at the moment.</p>
+          {% endif %}
       </div>
-            {% if friend_requests %}
-                <ul>
-                    {% for request in friend_requests %}
-                        <li>{{ request.from_user.username }} sent you a friend request.</li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>No friend requests at the moment.</p>
-            {% endif %}
-      </div>
-    </div>
   </div>
 </div>
 
