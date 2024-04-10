@@ -85,15 +85,8 @@
               {% for request in friend_requests %}
                   <div class="user-box">
                       <span>{{ request.from_user.username }}</span>
-                      <a href="{% url 'accept-friend-request' request.id %}">Accept</a>
-                      {% comment %} <form method="post" action="">
-                          {% csrf_token %}
-                          <button type="submit" class="btn btn-dark">Accept</button>
-                      </form>
-                      <form method="post" action="">
-                          {% csrf_token %}
-                          <button type="submit" class="btn btn-dark">Cancel</button>
-                      </form> {% endcomment %}
+                      <a href="{% url 'accept-friend-request' request.id %}" class="btn btn-dark">Accept</a>
+                      <a href="{% url 'reject-friend-request' request.id %}" class="btn btn-dark">cancel</a>
                   </div>
               {% endfor %}
           {% else %}

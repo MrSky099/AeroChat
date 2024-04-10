@@ -123,11 +123,7 @@
     <div class="col-md-8">
       <div class="text-center">
         {% if friend_request_sent %}
-            <form method="post" action="{% url 'send_friend_request' searched_user.username %}" >
-              {% csrf_token %}
-              <input type="hidden" name="username" value="{{ searched_user.username }}">
-              <button type="submit" class="btn btn-dark mx-2">Cancel Request</button>
-            </form>
+            {% comment %} <a href="{% url 'reject-friend-request' %}" class="btn btn-dark">cancel</a> {% endcomment %}
         {% else %}
             <form method="post" action="{% url 'send_friend_request' searched_user.username %}" >
               {% csrf_token %}

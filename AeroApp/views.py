@@ -136,15 +136,12 @@ def SearchOtherUsers(request):
 def OtherUserProfile(request, username):
     searched_user = get_object_or_404(User, username=username)
     bio = searched_user.Bio if searched_user.Bio else ''
-    followers_count = 500  # Replace with actual follower count
-    following_count = 200  # Replace with actual following count
     friend_request_sent = FriendRequest.objects.filter(from_user=request.user, to_user=searched_user).exists()
-    return render(request, 'otheruserprofile.html', {'searched_user': searched_user, 'bio': bio, 'followers_count': followers_count, 'following_count': following_count, 'friend_request_sent': friend_request_sent})
+    return render(request, 'otheruserprofile.html', {'searched_user': searched_user, 'bio': bio, 'friend_request_sent': friend_request_sent})
 
 def send_friend_request(request,username):
     if request.method == 'POST':
         from_user = request.user
-        print(from_user)
         to_user = get_object_or_404(User, username=username)
         friend_request = FriendRequest(from_user=from_user, to_user=to_user)
         friend_request.save()
@@ -159,10 +156,11 @@ def accept_friend_request(request, request_id):
     messages.info(request,'Accept request successfully')
     return render(request, 'pending_request.html', {'friend_request':friend_request})
     
-def reject_friend_request(request, username):
-    friend_request = get_object_or_404(FriendRequest, to_user = request.user , from_user_username = username)
+def reject_friend_request(request, request_id):
+    friend_request = get_object_or_404(FriendRequest, id=request_id)
     friend_request.delete()
-    return redirect('friendsList')
+    messages.info(request,'Reject request successfully')
+    return render(request, 'pending_request.html', {'friend_request':friend_request})
 
 def friendsList(request):
     friends = Friendship.objects.filter(user1=request.user) | Friendship.objects.filter(user2=request.user)
