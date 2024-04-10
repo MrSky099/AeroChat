@@ -67,6 +67,14 @@
     </div>
 </nav>
 
+{% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-primary custom-alert d-flex justify-content-center align-items-center" role="alert">
+        <p>{{ message }}</p>
+      </div>  
+    {% endfor %}
+{% endif %}
+
 <div class="container mt-5">
   <div class="row justify-content-center">
       <div class="col-md-4">
@@ -77,14 +85,15 @@
               {% for request in friend_requests %}
                   <div class="user-box">
                       <span>{{ request.from_user.username }}</span>
-                      <form method="post" action="">
+                      <a href="{% url 'accept-friend-request' request.id %}">Accept</a>
+                      {% comment %} <form method="post" action="">
                           {% csrf_token %}
                           <button type="submit" class="btn btn-dark">Accept</button>
                       </form>
                       <form method="post" action="">
                           {% csrf_token %}
                           <button type="submit" class="btn btn-dark">Cancel</button>
-                      </form>
+                      </form> {% endcomment %}
                   </div>
               {% endfor %}
           {% else %}

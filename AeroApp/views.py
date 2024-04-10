@@ -67,6 +67,7 @@ def UserOTPVerify(request):
     if request.method == 'POST':
         otp_entered = request.POST.get('otp')
         otp_send = request.session.get('otp')
+        print(otp_send)
         username = request.session.get('username')
         otp_time_str = request.session.get('otp_time')
 
@@ -92,12 +93,12 @@ def UserOTPVerify(request):
             return redirect('verify-otp')
         
     return render(request, 'verify-otp.html')
-
 def UserLogout(request):
     logout(request)
     return redirect('register')
 
 def Home(request):
+
     return render(request, 'home.html')
 
 def UserProfile(request, username):
@@ -149,15 +150,15 @@ def send_friend_request(request,username):
         friend_request.save()
         messages.info(request, "Send Friend Request")
         return redirect('other-profile', username=username)
-    return redirect('home')
+    return redirect('other-profile')
 
-def accept_friend_request(request, username):
-    friend_request = get_object_or_404(FriendRequest, to_user = request.user , from_user_username = username)
+def accept_friend_request(request, request_id):
+    friend_request = get_object_or_404(FriendRequest, id=request_id)
     Friendship.objects.create(user1 =  friend_request.from_user , user2 = friend_request.to_user)
     friend_request.delete()
-    messages.add_message('Accept request successfully')
-    # return redirect('friendsList')
-
+    messages.info(request,'Accept request successfully')
+    return render(request, 'pending_request.html', {'friend_request':friend_request})
+    
 def reject_friend_request(request, username):
     friend_request = get_object_or_404(FriendRequest, to_user = request.user , from_user_username = username)
     friend_request.delete()
