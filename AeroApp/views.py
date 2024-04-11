@@ -7,6 +7,7 @@ from django.utils import timezone
 from .models import User, FriendRequest, Friendship
 from django.shortcuts import render, get_object_or_404
 from django.db import IntegrityError
+from django.contrib.auth.decorators import login_required
 
 User = get_user_model()
 
@@ -54,6 +55,7 @@ def UserLogin(request):
 
         if authenticated_user is not None:
             otp = generate_otp()
+            print(otp)
             send_otp_email(user.email, otp)
             request.session['otp'] = otp
             request.session['username'] = username
@@ -68,10 +70,8 @@ def UserOTPVerify(request):
     if request.method == 'POST':
         otp_entered = request.POST.get('otp')
         otp_send = request.session.get('otp')
-        print(otp_send)
         username = request.session.get('username')
         otp_time_str = request.session.get('otp_time')
-
         otp_time = timezone.datetime.fromisoformat(otp_time_str) if otp_time_str else None
 
         if otp_time:
@@ -98,15 +98,17 @@ def UserLogout(request):
     logout(request)
     return redirect('register')
 
+@login_required
 def Home(request):
-
     return render(request, 'home.html')
 
+@login_required
 def UserProfile(request, username):
     user = get_object_or_404(User, username=username)
     bio = request.user.Bio if request.user.Bio else ''
     return render(request, 'userprofile.html', {'user':user,'bio': bio})
 
+@login_required
 def UserBio(request):
     if request.method == 'POST':
         user = request.user
@@ -118,6 +120,7 @@ def UserBio(request):
     bio = request.user.Bio if request.user.Bio else ''
     return render(request, 'bio.html', {'bio': bio})
 
+@login_required
 def SearchOtherUsers(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -134,13 +137,15 @@ def SearchOtherUsers(request):
             return render(request, 'searchpeople.html', {'error_messege':error_messege})
     else:
         return render(request, 'searchpeople.html')
-    
+
+@login_required   
 def OtherUserProfile(request, username):
     searched_user = get_object_or_404(User, username=username)
     bio = searched_user.Bio if searched_user.Bio else ''
     friend_request_sent = FriendRequest.objects.filter(from_user=request.user, to_user=searched_user).first()
     return render(request, 'otheruserprofile.html', {'searched_user': searched_user, 'bio': bio, 'friend_request_sent': friend_request_sent})
 
+@login_required
 def send_friend_request(request,username):
     if request.method == 'POST':
         from_user = request.user
@@ -153,6 +158,7 @@ def send_friend_request(request,username):
             return redirect('other-profile', username=username)
     return render(request, 'otheruserprofile.html')
 
+@login_required
 def accept_friend_request(request, request_id):
     if request.method == 'POST':
         friend_request = get_object_or_404(FriendRequest, id=request_id)
@@ -175,7 +181,8 @@ def accept_friend_request(request, request_id):
             messages.error(request, 'Error')
             return redirect('requests')
     return render(request, 'pending_request.html', {'friend_request':friend_request})
-    
+
+@login_required
 def reject_friend_request(request, request_id):
     if request.method == 'POST':
         friend_request = get_object_or_404(FriendRequest, id=request_id)
@@ -184,6 +191,7 @@ def reject_friend_request(request, request_id):
         return redirect('requests')
     return render(request, 'pending_request.html', {'friend_request':friend_request})
 
+@login_required
 def reject_friend_request_from_sender_user(request,request_id):
     if request.method == 'POST':
         friend_request = get_object_or_404(FriendRequest, id=request_id, from_user = request.user)
@@ -192,15 +200,18 @@ def reject_friend_request_from_sender_user(request,request_id):
         return redirect('other-profile', username=friend_request.to_user.username)
     return render(request, 'otheruserprofile.html', {'friend_request':friend_request})
 
+@login_required
 def friendsList(request):
     friends = Friendship.objects.filter(user1=request.user) | Friendship.objects.filter(user2=request.user)
     return render(request, 'friendslist.html', {'friends':friends})
 
+@login_required
 def PandingRequest(request):
     friend_requests = FriendRequest.objects.filter(to_user=request.user)
     friend_requests_dict = {'friend_requests': list(friend_requests)}
     return render(request, 'pending_request.html', friend_requests_dict)
 
+@login_required
 def ShowFriend(request):
     FriendShips = Friendship.objects.filter(user1=request.user)
     Friends = [i.user2 for i in FriendShips]
