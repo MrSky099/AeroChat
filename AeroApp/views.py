@@ -122,6 +122,7 @@ def SearchOtherUsers(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         if username:
+            current_user = request.user
             try:
                 searched_user = User.objects.get(username=username)
                 return render(request, 'searchpeople.html', {'searched_user':searched_user})
@@ -199,3 +200,8 @@ def PandingRequest(request):
     friend_requests = FriendRequest.objects.filter(to_user=request.user)
     friend_requests_dict = {'friend_requests': list(friend_requests)}
     return render(request, 'pending_request.html', friend_requests_dict)
+
+def ShowFriend(request):
+    FriendShips = Friendship.objects.filter(user1=request.user)
+    Friends = [i.user2 for i in FriendShips]
+    return render(request, 'showfriend.html' , {'Friends': Friends})
