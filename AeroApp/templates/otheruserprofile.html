@@ -122,13 +122,17 @@
 <div class="row justify-content-center mt-4">
     <div class="col-md-8">
       <div class="text-center">
-        {% if friend_request_sent %}
-            {% comment %} <a href="{% url 'reject-friend-request' %}" class="btn btn-dark">cancel</a> {% endcomment %}
-        {% else %}
-            <form method="post" action="{% url 'send_friend_request' searched_user.username %}" >
+        {% if not friend_request_sent %}
+            <form method="post" action="{% url 'send-friend-request' username=searched_user.username %}" >
               {% csrf_token %}
               <input type="hidden" name="username" value="{{ searched_user.username }}">
               <button type="submit" class="btn btn-dark mx-2">Add Friend</button>
+            </form>
+        {% else %}
+            <form method="post" action="{% url 'reject-friend-request-from-sender' request_id=friend_request_sent.id %}" >
+              {% csrf_token %}
+              <input type="hidden" name="username" value="{{ searched_user.username }}">
+              <button type="submit" class="btn btn-dark mx-2">cancel</button>
             </form>
         {% endif %}
       </div>

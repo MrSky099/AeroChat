@@ -6,6 +6,7 @@ from .utils import generate_otp, send_otp_email
 from django.utils import timezone
 from .models import User, FriendRequest, Friendship
 from django.shortcuts import render, get_object_or_404
+from django.db import IntegrityError
 
 User = get_user_model()
 
@@ -136,31 +137,59 @@ def SearchOtherUsers(request):
 def OtherUserProfile(request, username):
     searched_user = get_object_or_404(User, username=username)
     bio = searched_user.Bio if searched_user.Bio else ''
-    friend_request_sent = FriendRequest.objects.filter(from_user=request.user, to_user=searched_user).exists()
+    friend_request_sent = FriendRequest.objects.filter(from_user=request.user, to_user=searched_user).first()
     return render(request, 'otheruserprofile.html', {'searched_user': searched_user, 'bio': bio, 'friend_request_sent': friend_request_sent})
 
 def send_friend_request(request,username):
     if request.method == 'POST':
         from_user = request.user
         to_user = get_object_or_404(User, username=username)
-        friend_request = FriendRequest(from_user=from_user, to_user=to_user)
-        friend_request.save()
-        messages.info(request, "Send Friend Request")
-        return redirect('other-profile', username=username)
-    return redirect('other-profile')
+        existing_request = FriendRequest.objects.filter(from_user=from_user, to_user=to_user).exists()
+        if not existing_request:
+            friend_request = FriendRequest(from_user=from_user, to_user=to_user)
+            friend_request.save()
+            messages.info(request, "Send Friend Request")
+            return redirect('other-profile', username=username)
+    return render(request, 'otheruserprofile.html')
 
 def accept_friend_request(request, request_id):
-    friend_request = get_object_or_404(FriendRequest, id=request_id)
-    Friendship.objects.create(user1 =  friend_request.from_user , user2 = friend_request.to_user)
-    friend_request.delete()
-    messages.info(request,'Accept request successfully')
+    if request.method == 'POST':
+        friend_request = get_object_or_404(FriendRequest, id=request_id)
+        user1 = friend_request.from_user
+        user2 = friend_request.to_user
+
+        if Friendship.objects.filter(user1=user1, user2=user2).exists():
+            messages.info(request, 'Friendship already exists')
+            return redirect('requests')
+        
+        if Friendship.objects.filter(user1=user2, user2=user1).exists():
+            messages.info(request, 'Friendship already exists')
+            return redirect('requests')
+        try:
+            Friendship.objects.create(user1=user1, user2=user2)
+            friend_request.delete()
+            messages.info(request, 'Friend request accepted successfully')
+            return redirect('requests')
+        except IntegrityError:
+            messages.error(request, 'Error')
+            return redirect('requests')
     return render(request, 'pending_request.html', {'friend_request':friend_request})
     
 def reject_friend_request(request, request_id):
-    friend_request = get_object_or_404(FriendRequest, id=request_id)
-    friend_request.delete()
-    messages.info(request,'Reject request successfully')
+    if request.method == 'POST':
+        friend_request = get_object_or_404(FriendRequest, id=request_id)
+        friend_request.delete()
+        messages.info(request,'Reject request successfully')
+        return redirect('requests')
     return render(request, 'pending_request.html', {'friend_request':friend_request})
+
+def reject_friend_request_from_sender_user(request,request_id):
+    if request.method == 'POST':
+        friend_request = get_object_or_404(FriendRequest, id=request_id, from_user = request.user)
+        friend_request.delete()
+        messages.info(request,'Reject request successfully')
+        return redirect('other-profile', username=friend_request.to_user.username)
+    return render(request, 'otheruserprofile.html', {'friend_request':friend_request})
 
 def friendsList(request):
     friends = Friendship.objects.filter(user1=request.user) | Friendship.objects.filter(user2=request.user)
