@@ -119,22 +119,33 @@
 <div class="row justify-content-center mt-4">
     <div class="col-md-8">
       <div class="text-center">
-        {% if not friend_request_sent %}
-            <form method="post" action="{% url 'send-friend-request' username=searched_user.username %}" >
-              {% csrf_token %}
-              <input type="hidden" name="username" value="{{ searched_user.username }}">
-              <button type="submit" class="btn btn-dark mx-2">Add Friend</button>
+        {% if friend_request %}
+          {% for i in friend_request %}
+              <form method="post" action="{% url 'accept-friend-request-for-particularPerson' i.id %}" >
+                  {% csrf_token %}
+                  <input type="hidden" name="username" value="{{ searched_user.username }}">
+                  <button type="submit" class="btn btn-dark mx-2">Accept</button>
+              </form>
+              {% comment %} <form method="post" action="{% url 'reject-friend-request-from-sender' request_id=friend_request_sent.id %}" >
+                {% csrf_token %}
+                <input type="hidden" name="username" value="{{ searched_user.username }}">
+                <button type="submit" class="btn btn-dark mx-2">Cancel Request</button>
+            </form> {% endcomment %}
+          {% endfor %}
+        {% elif friend_request_sent %}
+            <form method="post" action="{% url 'reject-friend-request-from-sender' request_id=friend_request_sent.id %}" >
+                {% csrf_token %}
+                <input type="hidden" name="username" value="{{ searched_user.username }}">
+                <button type="submit" class="btn btn-dark mx-2">Cancel Request</button>
             </form>
         {% else %}
-            <form method="post" action="{% url 'reject-friend-request-from-sender' request_id=friend_request_sent.id %}" >
-              {% csrf_token %}
-              <input type="hidden" name="username" value="{{ searched_user.username }}">
-              <button type="submit" class="btn btn-dark mx-2">cancel</button>
+            <form method="post" action="{% url 'send-friend-request' username=searched_user.username %}" >
+                {% csrf_token %}
+                <input type="hidden" name="username" value="{{ searched_user.username }}">
+                <button type="submit" class="btn btn-dark mx-2">Add Friend</button>
             </form>
         {% endif %}
-        {% if friend_request %}
-            <h3>you get request</h3>
-        {% endif %}
+
       </div>
       <a class="btn btn-dark mx-2" href="#">Block</a>
     </div>

@@ -151,7 +151,7 @@ def OtherUserProfile(request, username):
     bio = searched_user.Bio if searched_user.Bio else ''
     friend_request_sent = FriendRequest.objects.filter(from_user=request.user, to_user=searched_user).first()
     friend_request = FriendRequest.objects.filter(to_user=request.user)
-    return render(request, 'otheruserprofile.html', {'searched_user': searched_user, 'bio': bio, 'friend_request_sent': friend_request_sent, 'friend_request': friend_request})
+    return render(request, 'otheruserprofile.html', {'searched_user': searched_user, 'bio': bio, 'friend_request_sent': friend_request_sent, 'friend_request':friend_request})
 
 @login_required
 def send_friend_request(request,username):
@@ -191,6 +191,30 @@ def accept_friend_request(request, request_id):
             messages.error(request, 'Error')
             return redirect('requests')
     return render(request, 'pending_request.html', {'friend_request':friend_request})
+
+@login_required
+def accept_friend_request_for_particularPerson(request, request_id):
+    if request.method == 'POST':
+        friend_request = get_object_or_404(FriendRequest, id=request_id, to_user=request.user)
+        user1 = friend_request.from_user
+        user2 = friend_request.to_user
+
+        if Friendship.objects.filter(user1=user1, user2=user2).exists():
+            messages.info(request, 'Friendship already exists')
+            return redirect('requests')
+        
+        if Friendship.objects.filter(user1=user2, user2=user1).exists():
+            messages.info(request, 'Friendship already exists')
+            return redirect('requests')
+        try:
+            Friendship.objects.create(user1=user1, user2=user2)
+            friend_request.delete()
+            messages.info(request, 'Friend request accepted successfully')
+            return redirect('requests')
+        except IntegrityError:
+            messages.error(request, 'Error')
+            return redirect('requests')
+    return render(request, 'otheruserprofile.html', {'friend_request':friend_request})
 
 @login_required
 def reject_friend_request(request, request_id):
