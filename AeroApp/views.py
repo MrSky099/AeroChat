@@ -106,7 +106,10 @@ def Home(request):
 def UserProfile(request, username):
     user = get_object_or_404(User, username=username)
     bio = request.user.Bio if request.user.Bio else ''
-    return render(request, 'userprofile.html', {'user':user,'bio': bio})
+    friendship1 = Friendship.objects.filter(user1=request.user).count()
+    friendship2 = Friendship.objects.filter(user2=request.user).count()
+    total_frineds = friendship1 + friendship2
+    return render(request, 'userprofile.html', {'user':user,'bio': bio, 'total_frineds':total_frineds})
 
 @login_required
 def UserBio(request):
@@ -126,12 +129,16 @@ def SearchOtherUsers(request):
         username = request.POST.get('username')
         if username:
             current_user = request.user
-            try:
-                searched_user = User.objects.get(username=username)
-                return render(request, 'searchpeople.html', {'searched_user':searched_user})
-            except User.DoesNotExist:
-                error_messege = "User Does not Exist."
-                return render(request, 'searchpeople.html', {'error_messege':error_messege})
+            if username != current_user.username:
+                try:
+                    searched_user = User.objects.get(username=username)
+                    return render(request, 'searchpeople.html', {'searched_user':searched_user})
+                except User.DoesNotExist:
+                    error_messege = "User Does not Exist."
+                    return render(request, 'searchpeople.html', {'error_messege':error_messege})
+            else:
+                error_message = "You cannot search for yourself."
+                return render(request, 'searchpeople.html', {'error_message':error_message})
         else:
             error_messege = "Please enter a valid Username"
             return render(request, 'searchpeople.html', {'error_messege':error_messege})
@@ -143,11 +150,14 @@ def OtherUserProfile(request, username):
     searched_user = get_object_or_404(User, username=username)
     bio = searched_user.Bio if searched_user.Bio else ''
     friend_request_sent = FriendRequest.objects.filter(from_user=request.user, to_user=searched_user).first()
-    return render(request, 'otheruserprofile.html', {'searched_user': searched_user, 'bio': bio, 'friend_request_sent': friend_request_sent})
+    friend_request = FriendRequest.objects.filter(to_user=request.user)
+    return render(request, 'otheruserprofile.html', {'searched_user': searched_user, 'bio': bio, 'friend_request_sent': friend_request_sent, 'friend_request': friend_request})
 
 @login_required
 def send_friend_request(request,username):
     if request.method == 'POST':
+        if Friendship.objects.filter(user1=request.user, user2=request.user).exists():
+            messages.info(request, 'Friendship already exists')
         from_user = request.user
         to_user = get_object_or_404(User, username=username)
         existing_request = FriendRequest.objects.filter(from_user=from_user, to_user=to_user).exists()
@@ -202,17 +212,16 @@ def reject_friend_request_from_sender_user(request,request_id):
 
 @login_required
 def friendsList(request):
-    friends = Friendship.objects.filter(user1=request.user) | Friendship.objects.filter(user2=request.user)
-    return render(request, 'friendslist.html', {'friends':friends})
+    if not Friendship.objects.filter(user1=request.user, user2=request.user).exists():
+        friendship1 = Friendship.objects.filter(user1=request.user)
+        friendship2 = Friendship.objects.filter(user2=request.user)
+        friend1 = [i.user2 for i in friendship1]
+        friend2  =[i.user1 for i in friendship2]
+        Friends = friend1 + friend2
+        return render(request, 'showfriend.html', {'Friends':Friends})
 
 @login_required
 def PandingRequest(request):
     friend_requests = FriendRequest.objects.filter(to_user=request.user)
     friend_requests_dict = {'friend_requests': list(friend_requests)}
     return render(request, 'pending_request.html', friend_requests_dict)
-
-@login_required
-def ShowFriend(request):
-    FriendShips = Friendship.objects.filter(user1=request.user)
-    Friends = [i.user2 for i in FriendShips]
-    return render(request, 'showfriend.html' , {'Friends': Friends})

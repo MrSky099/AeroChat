@@ -18,7 +18,7 @@ urlpatterns = [
     path('accept-friend-request/<int:request_id>/', views.accept_friend_request, name='accept-friend-request'),
     path('reject-friend-request/<int:request_id>/', views.reject_friend_request, name='reject-friend-request'),
     path('reject-friend-request-from-sender/<int:request_id>/', views.reject_friend_request_from_sender_user, name='reject-friend-request-from-sender'),
-    path('friends/', views.ShowFriend, name='friendsList'),
+    path('friends/', views.friendsList, name='friends'),
     path('requests/', views.PandingRequest , name='requests'),
     path('<str:username>/', views.OtherUserProfile, name='other-profile'),
 
