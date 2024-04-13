@@ -150,8 +150,8 @@ def OtherUserProfile(request, username):
     searched_user = get_object_or_404(User, username=username)
     bio = searched_user.Bio if searched_user.Bio else ''
     friend_request_sent = FriendRequest.objects.filter(from_user=request.user, to_user=searched_user).first()
-    friend_request = FriendRequest.objects.filter(to_user=request.user)
-    return render(request, 'otheruserprofile.html', {'searched_user': searched_user, 'bio': bio, 'friend_request_sent': friend_request_sent, 'friend_request':friend_request})
+    friend_request_to_current_user = FriendRequest.objects.filter(to_user=request.user, from_user=searched_user)
+    return render(request, 'otheruserprofile.html', {'searched_user': searched_user, 'bio': bio, 'friend_request_sent': friend_request_sent, 'friend_request_to_current_user':friend_request_to_current_user})
 
 @login_required
 def send_friend_request(request,username):
@@ -198,22 +198,23 @@ def accept_friend_request_for_particularPerson(request, request_id):
         friend_request = get_object_or_404(FriendRequest, id=request_id, to_user=request.user)
         user1 = friend_request.from_user
         user2 = friend_request.to_user
+        username = request.user.username
 
         if Friendship.objects.filter(user1=user1, user2=user2).exists():
             messages.info(request, 'Friendship already exists')
-            return redirect('requests')
+            return redirect('other-profile', username=username)
         
         if Friendship.objects.filter(user1=user2, user2=user1).exists():
             messages.info(request, 'Friendship already exists')
-            return redirect('requests')
+            return redirect('other-profile', username=username)
         try:
             Friendship.objects.create(user1=user1, user2=user2)
             friend_request.delete()
             messages.info(request, 'Friend request accepted successfully')
-            return redirect('requests')
+            return redirect('other-profile', username=username)
         except IntegrityError:
             messages.error(request, 'Error')
-            return redirect('requests')
+            return redirect('other-profile', username=username)
     return render(request, 'otheruserprofile.html', {'friend_request':friend_request})
 
 @login_required
