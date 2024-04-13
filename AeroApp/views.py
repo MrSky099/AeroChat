@@ -151,7 +151,9 @@ def OtherUserProfile(request, username):
     bio = searched_user.Bio if searched_user.Bio else ''
     friend_request_sent = FriendRequest.objects.filter(from_user=request.user, to_user=searched_user).first()
     friend_request_to_current_user = FriendRequest.objects.filter(to_user=request.user, from_user=searched_user)
-    return render(request, 'otheruserprofile.html', {'searched_user': searched_user, 'bio': bio, 'friend_request_sent': friend_request_sent, 'friend_request_to_current_user':friend_request_to_current_user})
+    existing_request = FriendRequest.objects.filter(from_user=request.user, to_user=searched_user).exists()
+    is_friend = Friendship.objects.filter(user1=request.user, user2=searched_user).exists() or Friendship.objects.filter(user1=searched_user, user2=request.user).exists()
+    return render(request, 'otheruserprofile.html', {'searched_user': searched_user, 'bio': bio, 'friend_request_sent': friend_request_sent, 'friend_request_to_current_user':friend_request_to_current_user, 'existing_request':existing_request, 'is_friend': is_friend})
 
 @login_required
 def send_friend_request(request,username):
@@ -250,3 +252,6 @@ def PandingRequest(request):
     friend_requests = FriendRequest.objects.filter(to_user=request.user)
     friend_requests_dict = {'friend_requests': list(friend_requests)}
     return render(request, 'pending_request.html', friend_requests_dict)
+
+def Chat(request):
+    return render(request, 'chat.html')

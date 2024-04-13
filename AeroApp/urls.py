@@ -11,6 +11,7 @@ urlpatterns = [
     path('logout/', views.UserLogout, name='logout'),
     path('bio/', views.UserBio, name='bio'),
     path('search/', views.SearchOtherUsers, name = 'search'),
+    path('chat/', views.Chat, name='chat'),
 
     path('profile/<str:username>/', views.UserProfile, name='profile'),
     path('home/', views.Home , name ='home'),

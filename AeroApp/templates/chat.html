@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Chat Page</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <style>
+    /* Add some custom styling if needed */
+    .chat-container {
+      height: 500px; /* Adjust height as needed */
+    }
+    .message-container {
+      overflow-y: auto; /* Enable vertical scroll */
+      height: calc(100% - 60px); /* Adjust height minus input height */
+    }
+  </style>
+</head>
+<body>
+
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar with people's names -->
+    <div class="col-md-3">
+      <h3>People</h3>
+      <ul class="list-group">
+        <!-- Replace these with actual names -->
+        <li class="list-group-item">Person 1</li>
+        <li class="list-group-item">Person 2</li>
+        <li class="list-group-item">Person 3</li>
+      </ul>
+    </div>
+    <!-- Main chat area -->
+    <div class="col-md-9">
+      <div class="chat-container">
+        <div class="message-container">
+          <!-- Messages will be displayed here -->
+        </div>
+        <!-- Input for sending messages -->
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" placeholder="Type your message...">
+          <div class="input-group-append">
+            <button class="btn btn-primary" type="button">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Your custom JavaScript code for handling chat functionality -->
+<script>
+  // Add your JavaScript code here
+  $(document).ready(function(){
+    // Functionality for sending messages
+    $('.btn-primary').click(function(){
+      var message = $('.form-control').val();
+      if(message.trim() !== ''){
+        $('.message-container').append('<div class="message sent">' + message + '</div>');
+        $('.form-control').val('');
+        // Scroll to bottom of the chat container
+        $('.message-container').scrollTop($('.message-container')[0].scrollHeight);
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
