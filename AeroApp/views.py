@@ -153,7 +153,10 @@ def OtherUserProfile(request, username):
     friend_request_to_current_user = FriendRequest.objects.filter(to_user=request.user, from_user=searched_user)
     existing_request = FriendRequest.objects.filter(from_user=request.user, to_user=searched_user).exists()
     is_friend = Friendship.objects.filter(user1=request.user, user2=searched_user).exists() or Friendship.objects.filter(user1=searched_user, user2=request.user).exists()
-    return render(request, 'otheruserprofile.html', {'searched_user': searched_user, 'bio': bio, 'friend_request_sent': friend_request_sent, 'friend_request_to_current_user':friend_request_to_current_user, 'existing_request':existing_request, 'is_friend': is_friend})
+    other_friend1 = Friendship.objects.filter(user1=searched_user).count()
+    other_friend2 = Friendship.objects.filter(user2=searched_user).count()
+    Totalfriends = other_friend1 + other_friend2
+    return render(request, 'otheruserprofile.html',{'searched_user': searched_user, 'bio': bio, 'friend_request_sent': friend_request_sent, 'friend_request_to_current_user':friend_request_to_current_user, 'existing_request':existing_request, 'is_friend': is_friend, 'TotalFriends': Totalfriends})
 
 @login_required
 def send_friend_request(request,username):
