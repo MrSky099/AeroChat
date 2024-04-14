@@ -47,6 +47,15 @@
       font-weight: 2px bold; /* Bold font weight */
       background-color: #f8f9fa;
     }
+    .search-results-title {
+      font-size: 20px;
+      font-weight:10px, bold;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      text-align: center;
+      text-decoration: none;
+      color: Black;
+    }
   </style>
 </head>
 <body>
@@ -75,7 +84,9 @@
           </div>
           <!-- Added individual boxes for each friend -->
           {% for friend in Friends %}
-            <div class="friend-box">{{ friend.username }}</div>
+            <a class="search-results-title" href="{% url 'other-profile' username=friend.username %}">
+              <div class="friend-box">{{ friend.username }}</div>
+            </a>
           {% endfor %}
       </div>
   </div>
