@@ -34,14 +34,15 @@
       border: 1px solid #ccc;
       border-radius: 5px;
       overflow-y: auto;
-      max-height: 300px; /* Adjust height as needed */
+      max-height: 500px; /* Adjust height as needed */
       padding: 10px;
     }
     .message {
       background-color: #f2f2f2;
       border-radius: 5px;
       padding: 5px 10px;
-      margin-bottom: 10px;
+      margin-bottom: 5px; /* Reduced margin */
+      font-size: 14px; /* Reduced font size */
     }
     .message.sender {
       background-color: #d3e0ff;
@@ -60,6 +61,14 @@
       justify-content: center;
       align-items: center;
     }
+    .user-heading {
+      text-align: center;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+      padding-top: 0px;
+      margin-top: 0px;
+    }
   </style>
 </head>
 <body>
@@ -72,10 +81,12 @@
     </div>
     <!-- Side Menu for User Details -->
   </nav>
-  <h2>name</h2>
-  <div class="container mt-5">
+  <div class="container mt-1">
     <div class="row">
       <div class="col-md-8 offset-md-2">
+        <div class="user-heading">
+          <h2>{{ searched_user }}</h2>
+        </div>
         <div class="chat-box" id="chat-box">
           <!-- Sender Messages -->
           <div class="message sender">
@@ -89,7 +100,31 @@
             <p>Hi there!</p>
             <p class="timestamp">12:01 PM</p>
           </div>
-          <!-- Add more messages here -->
+          <div class="message sender">
+            <span>You:</span>
+            <p>Hello!</p>
+            <p class="timestamp">12:00 PM</p>
+          </div>
+          <div class="message receiver">
+            <span>Friend:</span>
+            <p>Hi there!</p>
+            <p class="timestamp">12:01 PM</p>
+          </div>
+          <div class="message receiver">
+            <span>Friend:</span>
+            <p>Hi there!</p>
+            <p class="timestamp">12:01 PM</p>
+          </div>
+          <div class="message sender">
+            <span>You:</span>
+            <p>Hello!</p>
+            <p class="timestamp">12:00 PM</p>
+          </div>
+          <div class="message receiver">
+            <span>Friend:</span>
+            <p>Hi there!</p>
+            <p class="timestamp">12:01 PM</p>
+          </div>
         </div>
         <!-- Message Input and Send Button -->
         <div class="input-group mt-3">

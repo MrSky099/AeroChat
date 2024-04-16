@@ -121,6 +121,7 @@
       <div class="text-center">
         {% if is_friend %}
             <p>You are friends with {{ searched_user.username }}</p>
+            <a href="{% url 'chat' searched_user.username %}" class="btn btn-dark mx-2">Message</a>
         {% elif friend_request_to_current_user %}
             <ul>
                 {% for request in friend_request_to_current_user %}

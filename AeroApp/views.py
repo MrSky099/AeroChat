@@ -256,5 +256,6 @@ def PandingRequest(request):
     friend_requests_dict = {'friend_requests': list(friend_requests)}
     return render(request, 'pending_request.html', friend_requests_dict)
 
-def Chat(request):
-    return render(request, 'chat.html')
+def Chat(request, username):
+    searched_user = get_object_or_404(User, username=username)
+    return render(request, 'chat.html', {'searched_user':searched_user})
