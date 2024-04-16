@@ -1,101 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
+{% load static %}
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Responsive Chat</title>
+  <title>AeroChat</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
   <style>
-    .chat-container {
-      display: flex;
-      height: 100vh;
+    body {
+      font-family: "Ubuntu";
+      background-color: #f9f9f9;
     }
-    .user-list {
-      flex: 0 0 20%;
-      background-color: #f5f5f5;
-      padding: 20px;
+    .navbar {
+      background-color: #f8f9fa; /* Light background color */
+      padding: 5px 15px; /* Adjusted padding */
+      margin: 0px;
     }
+    .navbar-brand {
+      font-size: 20px; /* Adjusted font size */
+      color: #212529; /* Text color */
+    }
+    .navbar-nav .nav-link {
+      font-size: 16px; /* Adjusted font size */
+      color: #212529; /* Text color */
+    }
+    .logo-img {
+      width: 100%; /* Ensure logo width fills the container */
+      max-width: 200px; /* Set max width for the logo */
+    } 
     .chat-box {
-      flex: 1;
-      padding: 20px;
-      overflow-y: scroll;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      overflow-y: auto;
+      max-height: 300px; /* Adjust height as needed */
+      padding: 10px;
     }
     .message {
+      background-color: #f2f2f2;
+      border-radius: 5px;
+      padding: 5px 10px;
       margin-bottom: 10px;
     }
-    .hidden {
-      display: none;
+    .message.sender {
+      background-color: #d3e0ff;
+      text-align: right;
+    }
+    .message.receiver {
+      background-color: #f9f9f9;
+      text-align: left;
+    }
+    .message .timestamp {
+      font-size: 12px;
+      color: #888;
+    }
+    .centered {
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   </style>
 </head>
 <body>
-  
-  <div class="container-fluid chat-container">
-    <div class="user-list">
-      <h5>Users</h5>
-      <ul class="list-group">
-        <li class="list-group-item user" data-user-id="1">User 1</li>
-        <li class="list-group-item user" data-user-id="2">User 2</li>
-        <li class="list-group-item user" data-user-id="3">User 3</li>
-      </ul>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <img src="{% static 'logo.png' %}" alt="logo of AeroChat" class="logo-img">
+        </a>       
     </div>
-    <div class="chat-box">
-      <h5>Chat</h5>
-      <div id="chat-messages"></div>
-      <form id="message-form">
-        <div class="mb-3">
-          <textarea class="form-control" id="message" rows="3"></textarea>
+    <!-- Side Menu for User Details -->
+  </nav>
+  <h2>name</h2>
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+        <div class="chat-box" id="chat-box">
+          <!-- Sender Messages -->
+          <div class="message sender">
+            <span>You:</span>
+            <p>Hello!</p>
+            <p class="timestamp">12:00 PM</p>
+          </div>
+          <!-- Receiver Messages -->
+          <div class="message receiver">
+            <span>Friend:</span>
+            <p>Hi there!</p>
+            <p class="timestamp">12:01 PM</p>
+          </div>
+          <!-- Add more messages here -->
         </div>
-        <button type="submit" class="btn btn-primary">Send</button>
-      </form>
+        <!-- Message Input and Send Button -->
+        <div class="input-group mt-3">
+          <input type="text" class="form-control" placeholder="Type your message...">
+          <div class="input-group-append">
+            <button class="btn btn-primary" type="button">Send</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const userList = document.querySelectorAll('.user');
-      const chatBox = document.querySelector('.chat-box');
-      const chatMessages = document.getElementById('chat-messages');
-      const messageForm = document.getElementById('message-form');
-      const messageInput = document.getElementById('message');
-
-      function switchUser(userId) {
-        // Hide all chat boxes
-        document.querySelectorAll('.chat').forEach(chat => {
-          chat.classList.add('hidden');
-        });
-        // Show the selected chat box
-        document.getElementById(`chat-user-${userId}`).classList.remove('hidden');
-      }
-
-      function sendMessage(message, userId) {
-        // Here you can send the message to the backend and update the UI
-        const messageElement = document.createElement('div');
-        messageElement.classList.add('message');
-        messageElement.textContent = message;
-        document.getElementById(`chat-messages-${userId}`).appendChild(messageElement);
-        // Scroll chat box to bottom
-        document.getElementById(`chat-messages-${userId}`).scrollTop = document.getElementById(`chat-messages-${userId}`).scrollHeight;
-      }
-
-      userList.forEach(user => {
-        user.addEventListener('click', function () {
-          const userId = this.dataset.userId;
-          switchUser(userId);
-        });
-      });
-
-      messageForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-        const message = messageInput.value.trim();
-        if (message !== '') {
-          const activeUserId = document.querySelector('.chat:not(.hidden)').dataset.userId;
-          sendMessage(message, activeUserId);
-          messageInput.value = ''; // Clear input field
-        }
-      });
-    });
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
